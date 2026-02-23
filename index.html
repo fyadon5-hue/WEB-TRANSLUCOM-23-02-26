@@ -1,0 +1,320 @@
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Send, CheckCircle2, Truck, Package, ShieldAlert, Wrench, MapPin, Scale, Box } from "lucide-react";
+
+type ServiceType = "Cargas Peligrosas" | "Cargas Generales" | "Alquiler de Maquinaria";
+
+interface FormData {
+  serviceType: ServiceType;
+  origin: string;
+  destination: string;
+  weight: string;
+  volume: string;
+  machineryType?: string;
+  contactName: string;
+  contactEmail: string;
+  message: string;
+}
+
+export default function QuoteForm() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    serviceType: "Cargas Generales",
+    origin: "",
+    destination: "",
+    weight: "",
+    volume: "",
+    machineryType: "",
+    contactName: "",
+    contactEmail: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simulate API call to ayadon@translucom.com.ar
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    
+    console.log("Form submitted to ayadon@translucom.com.ar:", formData);
+    setIsLoading(false);
+    setIsSubmitted(true);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const serviceOptions = [
+    { id: "Cargas Generales", icon: <Package className="w-5 h-5" />, label: "Cargas Generales" },
+    { id: "Cargas Peligrosas", icon: <ShieldAlert className="w-5 h-5" />, label: "Cargas Peligrosas" },
+    { id: "Alquiler de Maquinaria", icon: <Wrench className="w-5 h-5" />, label: "Maquinaria" },
+  ];
+
+  if (isSubmitted) {
+    return (
+      <section id="quote" className="py-24 bg-slate-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white p-12 rounded-3xl shadow-xl border border-slate-100 text-center"
+          >
+            <div className="w-20 h-20 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-10 h-10" />
+            </div>
+            <h3 className="text-3xl font-bold text-slate-900 mb-4">¡Solicitud Enviada!</h3>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+              Hemos recibido su pedido de cotización. Un asesor comercial se pondrá en contacto con usted en las próximas 24 horas hábiles.
+            </p>
+            <button 
+              onClick={() => setIsSubmitted(false)}
+              className="px-8 py-3 bg-teal-600 text-white rounded-xl font-semibold hover:bg-teal-700 transition-colors"
+            >
+              Volver a empezar
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="quote" className="py-24 bg-slate-50">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+          
+          {/* Info Column */}
+          <div className="lg:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-teal-600 font-semibold tracking-wide uppercase text-sm mb-3">Cotización Online</h2>
+              <h3 className="text-4xl font-bold text-slate-900 mb-6 leading-tight">
+                Solicite su presupuesto <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-blue-600">en minutos</span>
+              </h3>
+              <p className="text-slate-600 mb-8 leading-relaxed">
+                Complete el formulario con los detalles de su carga o requerimiento de maquinaria y nuestro equipo procesará su solicitud de inmediato.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center shrink-0 border border-slate-100">
+                    <Truck className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">Flota Moderna</h4>
+                    <p className="text-sm text-slate-500">Unidades equipadas con seguimiento satelital.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center shrink-0 border border-slate-100">
+                    <ShieldAlert className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900">Seguridad Total</h4>
+                    <p className="text-sm text-slate-500">Certificaciones internacionales de calidad y seguridad.</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Form Column */}
+          <div className="lg:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100"
+            >
+              <form onSubmit={handleSubmit} className="space-y-6">
+                
+                {/* Service Selection */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-4">Tipo de Servicio</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {serviceOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, serviceType: option.id as ServiceType }))}
+                        className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                          formData.serviceType === option.id
+                            ? "border-teal-500 bg-teal-50 text-teal-700"
+                            : "border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200"
+                        }`}
+                      >
+                        {option.icon}
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Origin */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-700">Origen</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input
+                        required
+                        type="text"
+                        name="origin"
+                        value={formData.origin}
+                        onChange={handleChange}
+                        placeholder="Ciudad, Provincia"
+                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Destination */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-700">Destino</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input
+                        required
+                        type="text"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleChange}
+                        placeholder="Ciudad, Provincia"
+                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {formData.serviceType === "Alquiler de Maquinaria" ? (
+                    <motion.div
+                      key="machinery"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2"
+                    >
+                      <label className="block text-sm font-semibold text-slate-700">Tipo de Maquinaria</label>
+                      <select
+                        name="machineryType"
+                        value={formData.machineryType}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                      >
+                        <option value="">Seleccione una opción</option>
+                        <option value="Pala Cargadora">Pala Cargadora</option>
+                        <option value="Topadora">Topadora</option>
+                        <option value="Retroexcavadora">Retroexcavadora</option>
+                        <option value="Motoniveladora">Motoniveladora</option>
+                      </select>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="cargo"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+                    >
+                      <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-slate-700">Peso Estimado (kg)</label>
+                        <div className="relative">
+                          <Scale className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="number"
+                            name="weight"
+                            value={formData.weight}
+                            onChange={handleChange}
+                            placeholder="Ej: 5000"
+                            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-slate-700">Volumen (m³)</label>
+                        <div className="relative">
+                          <Box className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="number"
+                            name="volume"
+                            value={formData.volume}
+                            onChange={handleChange}
+                            placeholder="Ej: 20"
+                            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+                    <input
+                      required
+                      type="text"
+                      name="contactName"
+                      value={formData.contactName}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-700">Email de Contacto</label>
+                    <input
+                      required
+                      type="email"
+                      name="contactEmail"
+                      value={formData.contactEmail}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-slate-700">Mensaje Adicional</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-sm resize-none"
+                    placeholder="Detalles adicionales sobre su carga o requerimientos especiales..."
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2 transition-all ${
+                    isLoading ? "bg-teal-400 cursor-not-allowed" : "bg-teal-600 hover:bg-teal-700 hover:-translate-y-0.5"
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Solicitar Presupuesto
+                      <Send className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
