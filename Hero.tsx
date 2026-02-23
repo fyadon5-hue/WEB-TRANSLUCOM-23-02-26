@@ -1,5 +1,5 @@
 import { useState, useRef, ChangeEvent } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Upload, Image as ImageIcon, Video, Loader2, Wand2, Play } from "lucide-react";
 import { editImage, generateVideo } from "../services/ai";
 
